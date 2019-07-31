@@ -89,7 +89,6 @@ NODE *BTree::get_node(void *key)
 int BTree::remove_node(void *key)
 {
 	NODE *node = get_node(key);
-	//TODO: be able to remove root node
 	if (node == root)
 	{
 		if (root->l_child)
@@ -109,10 +108,12 @@ int BTree::remove_node(void *key)
 				node->l_child->parent = root;
 		}
 		else
+		{
 			this->is_empty = true;
-		return 1;
+			return 1;
+		}
 	}
-	if (node == node->parent->l_child)
+	else if (node == node->parent->l_child)
 	{
 		if (node->r_child)
 		{
