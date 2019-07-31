@@ -168,56 +168,31 @@ int BTree::insert_node(void *key, void *value)
 		return 1;
 	}
 	NODE **i = &root;
-	while ((*i)->l_child || (*i)->r_child)
+	NODE *parent = root;
+	do
 	{
 		int dir = compare_keys(key, (*i)->key);
 		switch(dir)
 		{
 		case -1:
 		{
-			if ((*i)->r_child)
-			{
-				if (compare_keys((*i)->r_child->key, key) == 1)
-				{
-					i = &((*i)->r_child);
-					break;
-				}
-			}
-			NODE *add = new NODE(key, value, this, *i);
-			add->r_child = (*i)->r_child;
-			if (add->r_child)
-				add->r_child->parent = add;
-			(*i)->r_child = add;
-			return 1;
+			i = &((*i)->r_child);
+			if (*i)
+				parent = *i;
+			break;
 		}
 		case 1:
 		{
-			int l_tmp, r_tmp;
-			if ((*i)->l_child)
-			{
-				l_tmp = compare_keys((*i)->l_child->key, key);
-				if (l_tmp == -1)
-				{
-					i = &((*i)->l_child);
-					break;
-				}
-			}
-			NODE *add = new NODE(key, value, this, *i);
-			add->l_child = (*i)->l_child;
-			if (add->l_child)
-				add->l_child->parent = add;
-			(*i)->l_child = add;
-			return 1;
+			i = &((*i)->l_child);
+			if (*i)
+				parent = *i;
+			break;
 		}
 		default:
 			return 0;
 		}
-	}
-	int side = (compare_keys(key, (*i)->key) == 1) ? 0 : 1;
-	if (side == 0)
-		(*i)->l_child = new NODE(key, value, this, *i);
-	else
-		(*i)->r_child = new NODE(key, value, this, *i);
+	} while ((*i));
+	*i = new NODE(key, value, this, parent);
 	return 1;
 }
 
@@ -298,9 +273,9 @@ int main(int argc, char **argv)
 	int a = 5;
 	int b = 7;
 	int c = 2;
-	int d = 70;
+	int d = 68;
 	int e = 420;
-	int f = 1;
+	int f = 2;
 	int g = 4;
 	int h = 893;
 	int z = 34;
