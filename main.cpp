@@ -89,6 +89,7 @@ NODE *BTree::get_node(void *key)
 int BTree::remove_node(void *key)
 {
 	NODE *node = get_node(key);
+	//TODO: be able to remove root node
 	if (node == root)
 	{
 		if (root->l_child)
@@ -166,8 +167,6 @@ int BTree::insert_node(void *key, void *value)
 		is_empty = false;
 		return 1;
 	}
-	if (get_node(key))
-		return 0;
 	NODE **i = &root;
 	while ((*i)->l_child || (*i)->r_child)
 	{
@@ -209,10 +208,9 @@ int BTree::insert_node(void *key, void *value)
 				add->l_child->parent = add;
 			(*i)->l_child = add;
 			return 1;
-			
 		}
 		default:
-			return -1;
+			return 0;
 		}
 	}
 	int side = (compare_keys(key, (*i)->key) == 1) ? 0 : 1;
@@ -238,7 +236,11 @@ BTree::BTree(vector<NODE> nodes, char (*compare_keys)(void *, void *), void (*de
 	this->delete_key = delete_key;
 	this->delete_value = delete_value;
 	this->root = new NODE(this, NULL);
-	is_empty = false;
+	is_empty = true;
+	for (auto i : nodes)
+	{
+		insert_node(i.key, i.value);
+	}
 }
 
 void BTree::delete_nodes(NODE *cur)
@@ -296,10 +298,23 @@ int main(int argc, char **argv)
 	int a = 5;
 	int b = 7;
 	int c = 2;
+	int d = 70;
+	int e = 420;
+	int f = 1;
+	int g = 4;
+	int h = 893;
+	int z = 34;
 	test.insert_node(&a, &a);
 	test.insert_node(&b, &b);
 	test.insert_node(&c, &c);
-	test.remove_node(&a);
+	test.insert_node(&d, &d);
+	test.insert_node(&e, &e);
+	test.insert_node(&f, &f);
+	test.insert_node(&g, &g);
+	test.insert_node(&h, &h);
+	test.insert_node(&z, &z);
+	//test.remove_node(&a);
+	//test.remove_node(&b);
 	test.print_tree();
 	return 0;
 }
